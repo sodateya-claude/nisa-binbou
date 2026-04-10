@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NISA貧乏度診断</title>
+<meta property="og:title" content="NISA貧乏度診断">
+<meta property="og:description" content="あなたのNISA貧乏度、何%？ 5つの質問で投資と生活のバランスを診断します。">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: Georgia, 'Times New Roman', serif;
+  background: #ffffff;
+  color: #111111;
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+}
+.container {
+  width: 100%;
+  max-width: 400px;
+  padding: 40px 20px 60px;
+}
+
+/* トップ画面 */
+h1 {
+  font-size: 1.3rem;
+  font-weight: normal;
+  letter-spacing: 0.03em;
+  margin-bottom: 12px;
+}
+.subcopy {
+  font-size: 0.88rem;
+  line-height: 1.7;
+  margin-bottom: 40px;
+}
+.meta {
+  font-size: 0.75rem;
+  margin-bottom: 32px;
+  line-height: 1.8;
+}
+.start-btn {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 0.95rem;
+  padding: 14px 32px;
+  background: #fff;
+  color: #111;
+  border: 1.5px solid #111;
+  border-radius: 0;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+}
+.start-btn:hover { background: #fff; }
+
+/* プログレスバー */
+.progress-bar {
+  width: 100%;
+  height: 2px;
+  background: #eee;
+  margin-bottom: 32px;
+}
+.progress-fill {
+  height: 100%;
+  background: #111;
+  transition: width 0.3s ease;
+  width: 0%;
+}
+
+/* 質問画面 */
+.question-num {
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  margin-bottom: 16px;
+}
+.question-text {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  margin-bottom: 32px;
+}
+.choices {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.choice-btn {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  padding: 14px 16px;
+  background: #fff;
+  color: #111;
+  border: 1.5px solid #111;
+  border-radius: 0;
+  cursor: pointer;
+  text-align: left;
+}
+.choice-btn:hover { background: #fff; }
+.choice-btn:active { background: #f5f5f5; }
+.choice-btn.selected {
+  background: #111;
+  color: #fff;
+}
+
+/* 結果画面 */
+.result-label {
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+}
+.result-number {
+  font-size: 3.5rem;
+  font-weight: normal;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+.result-level {
+  font-size: 1.1rem;
+  margin-bottom: 24px;
+}
+.meter-bar {
+  width: 100%;
+  height: 6px;
+  background: #eee;
+  margin-bottom: 32px;
+}
+.meter-fill {
+  height: 100%;
+  background: #111;
+  transition: width 1s ease;
+  width: 0%;
+}
+.result-desc {
+  font-size: 0.88rem;
+  line-height: 1.8;
+  margin-bottom: 32px;
+}
+.result-divider {
+  border: none;
+  border-top: 1px solid #111;
+  margin: 32px 0;
+}
+.rx-title {
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  margin-bottom: 16px;
+}
+.rx-list {
+  list-style: none;
+  margin-bottom: 0;
+}
+.rx-list li {
+  font-size: 0.85rem;
+  line-height: 1.8;
+  margin-bottom: 12px;
+  padding-left: 1.2em;
+  text-indent: -1.2em;
+}
+.rx-list li::before {
+  content: '- ';
+}
+.share-btn {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 0.95rem;
+  padding: 14px 32px;
+  background: #111;
+  color: #fff;
+  border: 1.5px solid #111;
+  border-radius: 0;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  text-decoration: none;
+  text-align: center;
+  margin-top: 40px;
+}
+.share-btn:hover { background: #111; }
+.retry-btn {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 0.9rem;
+  padding: 12px 32px;
+  background: #fff;
+  color: #111;
+  border: 1.5px solid #111;
+  border-radius: 0;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+}
+.credit {
+  font-size: 0.7rem;
+  text-align: center;
+  margin-top: 32px;
+  opacity: 0.5;
+}
+.hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- トップ画面 -->
+  <div id="topScreen">
+    <h1>NISA貧乏度診断</h1>
+    <p class="subcopy">将来のために、今を犠牲にしてない？</p>
+    <p class="meta">5問 / 約1分 / 登録不要</p>
+    <button class="start-btn" onclick="startQuiz()">診断スタート</button>
+  </div>
+
+  <!-- 質問画面 -->
+  <div id="quizScreen" class="hidden">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="question-num" id="questionNum"></div>
+    <div class="question-text" id="questionText"></div>
+    <div class="choices" id="choices"></div>
+  </div>
+
+  <!-- 結果画面 -->
+  <div id="resultScreen" class="hidden">
+    <div class="result-label">YOUR NISA BINBOU LEVEL</div>
+    <div class="result-number" id="resultNumber"></div>
+    <div class="result-level" id="resultLevel"></div>
+    <div class="meter-bar">
+      <div class="meter-fill" id="meterFill"></div>
+    </div>
+    <div class="result-desc" id="resultDesc"></div>
+    <hr class="result-divider">
+    <div class="rx-title">PRESCRIPTION</div>
+    <ul class="rx-list" id="rxList"></ul>
+    <a class="share-btn" id="shareBtn" target="_blank" rel="noopener">X でシェア</a>
+    <button class="retry-btn" onclick="location.reload()">もう一度診断する</button>
+    <div class="credit">@claude_sodateya</div>
+  </div>
+
+</div>
+
+<script>
+var questions = [
+  {
+    text: '手取り収入のうち、投資に回している割合は？',
+    choices: [
+      { text: '10%以下', score: 0 },
+      { text: '10〜20%', score: 1 },
+      { text: '20〜35%', score: 2 },
+      { text: '35%以上', score: 3 }
+    ]
+  },
+  {
+    text: 'すぐ使える現金（生活防衛資金）、月収の何ヶ月分ある？',
+    choices: [
+      { text: '6ヶ月以上', score: 0 },
+      { text: '3〜6ヶ月', score: 1 },
+      { text: '1〜3ヶ月', score: 2 },
+      { text: '1ヶ月以下', score: 3 }
+    ]
+  },
+  {
+    text: 'NISAに入金するために、我慢していることは？',
+    choices: [
+      { text: '特にない', score: 0 },
+      { text: '外食・趣味を少し減らした', score: 1 },
+      { text: '誘いを断る・旅行を諦めた', score: 2 },
+      { text: '食費削り・飲み会全断り', score: 3 }
+    ]
+  },
+  {
+    text: '含み損が出たとき、どう感じる？',
+    choices: [
+      { text: '気にしない', score: 0 },
+      { text: 'ソワソワするが放置', score: 1 },
+      { text: 'ナンピンしたくなる', score: 2 },
+      { text: '眠れない', score: 3 }
+    ]
+  },
+  {
+    text: '「非課税枠を使い切らないともったいない」と思う？',
+    choices: [
+      { text: '気にしない', score: 0 },
+      { text: '意識するが無理しない', score: 1 },
+      { text: '年末に焦る', score: 2 },
+      { text: '枠から逆算して入金額を決めている', score: 3 }
+    ]
+  }
+];
+
+var levels = [
+  {
+    maxScore: 2,
+    name: '健全投資家',
+    desc: '投資と生活のバランスが取れています。無理のない範囲で資産形成ができている理想的な状態。今の生活を楽しみながら、将来にも備えられています。',
+    rx: [
+      '今のペースを維持しましょう',
+      '余裕があれば投資額を少しずつ増やすのもアリ',
+      '生活を犠牲にしないことが最大のリスク管理です'
+    ]
+  },
+  {
+    maxScore: 5,
+    name: 'ちょい無理勢',
+    desc: '少しだけ投資に寄りすぎているかも。今は大丈夫でも、急な出費や収入減があったときに苦しくなる可能性があります。',
+    rx: [
+      '生活防衛資金（月収3〜6ヶ月分）を先に確保する',
+      '投資額は「余ったお金」で考える癖をつける',
+      '月に1回は「我慢していること」を書き出してみる'
+    ]
+  },
+  {
+    maxScore: 8,
+    name: 'NISA貧乏 予備軍',
+    desc: '将来への不安から、今の生活を結構犠牲にしています。「投資のために節約」が習慣化していませんか？ お金は使うためにあることを思い出して。',
+    rx: [
+      '投資額を手取りの15%以内に制限する',
+      '月1回は「自分のためにお金を使う日」を作る',
+      '友人の誘いを「お金がないから」で断るのをやめる',
+      '非課税枠は「5年で埋めればいい」と考え直す'
+    ]
+  },
+  {
+    maxScore: 11,
+    name: 'ガチ NISA貧乏',
+    desc: '完全にNISA貧乏です。非課税枠を埋めることが目的化していて、生活の質が明らかに低下しています。将来のお金より、今の健康と人間関係のほうが大事です。',
+    rx: [
+      '投資額を今すぐ半分にする',
+      '生活防衛資金が月収6ヶ月分になるまで積立を減額する',
+      '「NISA枠を埋めなくても死なない」と毎朝唱える',
+      '友人との食事に月1回は行く（未来の自分への投資です）'
+    ]
+  },
+  {
+    maxScore: 15,
+    name: 'NISA教の信者',
+    desc: '非課税枠のために生きています。食費を削り、人間関係を断ち、趣味も捨てた。でも考えてみてください。そのお金を使う60代の自分は、友達がいますか？',
+    rx: [
+      '積立を一旦ストップして、生活を立て直す',
+      '「今日使う1万円」と「30年後の1万円」、どちらが人生を豊かにするか考える',
+      '信頼できる人に「最近お金の使い方おかしくない？」と聞いてみる',
+      '投資は人生の手段であって目的ではないことを思い出す'
+    ]
+  }
+];
+
+var currentQ = 0;
+var scores = [];
+var isTransitioning = false;
+
+function startQuiz() {
+  document.getElementById('topScreen').classList.add('hidden');
+  document.getElementById('quizScreen').classList.remove('hidden');
+  showQuestion();
+}
+
+function showQuestion() {
+  var q = questions[currentQ];
+  var total = questions.length;
+  document.getElementById('progressFill').style.width = (currentQ / total * 100) + '%';
+  document.getElementById('questionNum').textContent = 'QUESTION ' + (currentQ + 1) + ' / ' + total;
+  document.getElementById('questionText').textContent = q.text;
+
+  var choicesEl = document.getElementById('choices');
+  choicesEl.innerHTML = '';
+  q.choices.forEach(function(c) {
+    var btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.textContent = c.text;
+    btn.onclick = function() { selectAnswer(btn, c.score); };
+    choicesEl.appendChild(btn);
+  });
+}
+
+function selectAnswer(btn, score) {
+  if (isTransitioning) return;
+  isTransitioning = true;
+
+  // 選択状態を表示
+  var buttons = document.querySelectorAll('.choice-btn');
+  buttons.forEach(function(b) { b.classList.remove('selected'); });
+  btn.classList.add('selected');
+
+  // 少し間を置いて次へ
+  setTimeout(function() {
+    scores.push(score);
+    currentQ++;
+    if (currentQ < questions.length) {
+      showQuestion();
+    } else {
+      showResult();
+    }
+    isTransitioning = false;
+  }, 350);
+}
+
+function showResult() {
+  document.getElementById('quizScreen').classList.add('hidden');
+  document.getElementById('resultScreen').classList.remove('hidden');
+
+  var totalScore = scores.reduce(function(a, b) { return a + b; }, 0);
+  var percent = Math.round(totalScore / 15 * 100);
+
+  // レベル判定
+  var level = levels[levels.length - 1];
+  for (var i = 0; i < levels.length; i++) {
+    if (totalScore <= levels[i].maxScore) {
+      level = levels[i];
+      break;
+    }
+  }
+
+  document.getElementById('resultNumber').textContent = percent + '%';
+  document.getElementById('resultLevel').textContent = level.name;
+  document.getElementById('resultDesc').textContent = level.desc;
+
+  // メーターアニメーション
+  setTimeout(function() {
+    document.getElementById('meterFill').style.width = percent + '%';
+  }, 100);
+
+  // 処方箋
+  var rxList = document.getElementById('rxList');
+  rxList.innerHTML = '';
+  level.rx.forEach(function(item) {
+    var li = document.createElement('li');
+    li.textContent = item;
+    rxList.appendChild(li);
+  });
+
+  // シェアボタン
+  var shareText = '【NISA貧乏度 ' + percent + '%】' + level.name + '\n'
+    + level.desc.substring(0, 60) + '...\n\n'
+    + 'https://sodateya-claude.github.io/nisa-binbou/\n'
+    + '(@claude_sodateya)';
+  document.getElementById('shareBtn').href =
+    'https://x.com/intent/tweet?text=' + encodeURIComponent(shareText);
+}
+</script>
+</body>
+</html>
