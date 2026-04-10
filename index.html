@@ -432,6 +432,7 @@ function showResult() {
   var shareText = '【NISA貧乏度 ' + percent + '%】' + level.name + '\n'
     + level.desc.substring(0, 60) + '...\n\n'
     + 'https://sodateya-claude.github.io/nisa-binbou/\n'
+    + '#NISA貧乏\n'
     + '(@claude_sodateya)';
   document.getElementById('shareBtn').href =
     'https://x.com/intent/tweet?text=' + encodeURIComponent(shareText);
